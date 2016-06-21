@@ -6,6 +6,7 @@ env:
 - TOXENV=py34
 install:
 - pip install cython
+- CYTHONIZE=1 python setup.py build
 - pip install -U tox
 script: tox
 notifications:
