@@ -35,9 +35,11 @@ setup(
         'Programming Language :: Python :: 3',
         'Programming Language :: Python :: 3.3',
         'Programming Language :: Python :: 3.4',
+        'Programming Language :: Python :: 3.5',
         'Topic :: Internet :: WWW/HTTP',
         'Topic :: Text Processing :: Markup :: HTML',
     ],
+    setup_requires=['cython', 'numpy'],
     install_requires=['numpy', 'w3lib', 'six', 'cython'],
-    ext_modules=cythonize(extensions),
+    ext_modules=extensions,
 )

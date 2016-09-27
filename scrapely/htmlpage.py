@@ -7,8 +7,8 @@ multiple times.
 """
 import hashlib
 import six
+import requests
 
-from six.moves.urllib.request import urlopen
 from copy import deepcopy
 from w3lib.encoding import html_to_unicode
 
@@ -36,22 +36,12 @@ def url_to_page(url, encoding=None, default_encoding='utf-8'):
     `w3lib.encoding.html_to_unicode`. `default_encoding` is used if the
     encoding cannot be determined.
     """
-    fh = urlopen(url)
-    info = fh.info()
-    body_str = fh.read()
+    r = requests.get(url)
+    r.raise_for_status()
     # guess content encoding if not specified
-    if encoding is None:
-        try:
-            # Python 3.x
-            content_type_header = fh.getheader("content-type")
-        except AttributeError:
-            # Python 2.x
-            content_type_header = info.getheader("content-type")
-        encoding, body = html_to_unicode(content_type_header, body_str,
-                default_encoding=default_encoding)
-    else:
-        body = body_str.decode(encoding)
-    return HtmlPage(fh.geturl(), headers=dict(info.items()), body=body, encoding=encoding)
+    encoding = encoding or r.encoding
+    body = r.content.decode(encoding)
+    return HtmlPage(r.url, headers=dict(r.headers), body=body, encoding=encoding)
 
 
 def dict_to_page(jsonpage, body_key='body'):
