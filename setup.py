@@ -1,11 +1,13 @@
 #!/usr/bin/env python
 import os
+import platform
 from setuptools import setup, find_packages
 from setuptools.extension import Extension
 import numpy as np
 
 
 USE_CYTHON = 'CYTHONIZE' in os.environ
+IS_PYPY = platform.python_implementation() == 'PyPy'
 ext = '.pyx' if USE_CYTHON else '.c'
 extensions = [
     Extension("scrapely._htmlpage",
@@ -18,6 +20,8 @@ extensions = [
 if USE_CYTHON:
     from Cython.Build import cythonize
     extensions = cythonize(extensions)
+if IS_PYPY:
+    extensions = []
 
 
 setup(
@@ -45,7 +49,7 @@ setup(
         'Topic :: Text Processing :: Markup :: HTML',
     ],
     install_requires=['numpy', 'w3lib', 'six'],
-    extras_requires={
+    extras_require={
         'speedup': ['cython']
     },
     ext_modules=extensions,
